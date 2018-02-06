@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content_block_left %}
+<h2>Workout Set List</h2>
+<div class="container-fluid">
+  <div class="list-group">
+
+    {% for workoutset in workoutset_list %}
+    <div class="list-group-item">
+      <a href="{% url 'workoutset:detail' pk=workoutset.id %}">
+        <h4 class="list-group-item-heading">{{workoutset}}</h4>
+        {% for actionset in workoutset.actionsets.all %}
+        <p class="list-group-item-text">
+          {{actionset}}
+        </p>
+        {% endfor %}
+      </a>
+      <a class="btn btn-primary" href="{% url 'workoutsets:new' %}">Add Workout Set</a>
+      <a class="btn btn-warning btn-sm" href="{% url 'workoutsets:update' pk=workoutset.id %}">Update</a>
+      <a class="btn btn-danger btn-sm" href="{% url 'workoutsets:delete' pk=workoutset.id %}">Delete</a>
+    </div>
+    {% endfor %}
+  </div>
+  <a class="btn btn-primary" href="{% url 'workoutsets:new' %}">Add New Workout</a>
+</div>
+{% endblock %}

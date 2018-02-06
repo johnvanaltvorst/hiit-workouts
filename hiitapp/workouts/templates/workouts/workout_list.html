@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% block content_block_left %}
+<h2>Workout List</h2>
+<div class="container-fluid">
+  <div class="list-group">
+    {% for workout in workout_list %}
+    <div class="list-group-item mt-3 pr-1 bg-light">
+      <h4 class="list-group-item-heading"><a href="{% url 'workouts:detail' pk=workout.id %}">{{workout}}</a></h4>
+      {% if workout.workoutsets.all %}
+      <div class="list-group">
+        {% for workoutset in workout.workoutsets.all %}
+          <div class="list-group-item pr-1 pb-1 mt-4 bg-secondary">
+            <div class="list-group-item-heading">
+              <button type="button" class="btn btn-secpmdary mb-1">
+                <strong>WorkoutSet: </strong><span class="badge badge-light">{{workoutset}}</span>
+              </button>
+              <button type="button" class="btn btn-warning btn-sm mb-1">
+                Workout Video <span class="badge badge-light">{{workoutset.video}}</span>
+              </button>
+              <span class="float-right">
+              <div class="dropdown show">
+                <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <i class="fas fa-cog"></i>
+                </a>
+
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                  <a class="dropdown-item" href="{% url 'actionsets:add_to_workoutset' pk=workoutset.id %}">Add ActionSet to {{workoutset}}</a>
+                  <a class="dropdown-item" href="{% url 'workoutsets:update' pk=workoutset.id %}">Update WorkoutSet</a>
+                  <a class="dropdown-item" href="{% url 'workoutsets:delete' pk=workoutset.id %}">Delete WorkoutSet</a>
+                </div>
+              </div>
+            </span>
+
+
+
+            </div>
+            <div class="list-group mt-3">
+              {% for actionset in workoutset.actionsets.all %}
+              <div class="list-group-item text-white bg-dark">
+                <p><strong>Action Set: </strong>{{actionset}}</p>
+                <strong class="list-group-item-heading">Actions:</strong>
+                <div class="list-group">
+                  {% for action in actionset.actions.all %}
+                  <div class="list-group-flush">
+                    <span class="btn-group">
+                      <div class="dropdown show">
+                        <a class="" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                          <span class="fas fa-cog"></span>
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                          <a class="dropdown-item" href="{% url 'actions:update' pk=action.id %}">Update</a>
+                          <a class="dropdown-item" href="{% url 'actions:delete' pk=action.id %}">Delete</a>
+                        </div>
+                      </div>
+                    </span>
+                    <span>{{action}}</span>
+                  </div>
+                  {% endfor %}
+                  <a class="btn btn-primary mt-2" href="{% url 'actions:add_to_actionset' pk=actionset.id %}">Add Action to {{actionset}}</a>
+                </div>
+
+              </div>
+              <div class="list-group-item" id="actions_json">
+                {% include 'workouts:actionsAPI' actionset_pk=actionset.id %}
+                {{action_json}}
+              </div>
+              {% endfor %}
+            </div>
+            </div>
+            {% endfor %}
+          </div>
+      {% else %}
+      <div class="list-group">
+        <div class="list-group-item">
+          <div class="list-group-item-heading">
+            No Workout Sets Exist
+          </div>
+        </div>
+      </div>
+      {% endif %}
+      <div class="container mt-1">
+        <div class="row">
+          <a class="btn btn-primary" href="{% url 'workoutsets:add_to_workout' pk=workout.id %}">Add Workout Set to {{workout.name}}</a>
+        </div>
+        <div class="row">
+          <a class="col-md-6 btn btn-warning btn-sm" href="{% url 'workouts:update' pk=workout.id %}">Update Workout</a>
+        </div>
+        <div class="row">
+          <a class="col-md-6 btn btn-danger btn-sm" href="{% url 'workouts:delete' pk=workout.id %}">Delete Workout</a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+<div class="container-fluid mt-5">
+  <a class="btn btn-primary" href="{% url 'workouts:new' %}">Add New Workout</a>
+</div>
+{% endblock %}

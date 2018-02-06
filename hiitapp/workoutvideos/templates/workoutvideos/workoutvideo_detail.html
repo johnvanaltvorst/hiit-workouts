@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content_block_left %}
+<div class="container-fluid">
+  <h4>WorkoutVideo Details: {{workoutvideo}}</h4>
+  <a class="btn btn-warning" href="{% url 'workoutvideos:update' pk=workoutvideo.id %}">Update</a>
+  <a class="btn btn-danger" href="{% url 'workoutvideos:delete' pk=workoutvideo.id %}">Delete</a>
+</div>
+{% endblock %}
+
+{% block content_block_right %}
+{% endblock %}

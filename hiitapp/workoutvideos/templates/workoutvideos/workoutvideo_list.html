@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content_block_left %}
+<h2>Workout Video List</h2>
+<div class="container-fluid">
+  <div class="list-group">
+    {% for workoutvideo in workoutvideo_list %}
+    <div class="list-group-item">
+      <h4 class="list-group-item-heading"><a href="{% url 'workoutvideos:detail' pk=workoutvideo.id %}">{{workoutvideo}}</a></h4>
+      <div class="list-group-item-text">
+        <a class="btn btn-primary" href="{% url 'workoutvideos:new' %}">Add Workout Video</a>
+        <a class="btn btn-warning btn-sm" href="{% url 'workoutvideos:update' pk=workoutvideo.pk %}">Update</a>
+        <a class="btn btn-danger btn-sm" href="{% url 'workoutvideos:delete' pk=workoutvideo.pk %}">Delete</a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  <a class="btn btn-primary mt-1" href="{% url 'workoutvideos:new' %}">Add New WorkoutVideo</a>
+</div>
+{% endblock %}

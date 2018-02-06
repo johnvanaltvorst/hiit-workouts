@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+
+{% block content_block_left %}
+<h4>Add New Workout</h4>
+<form method="post">
+  {% csrf_token %}
+  {% bootstrap_form form %}
+  <input type="submit" value="Submit" class="btn btn-primary">
+</form>
+{% endblock %}
