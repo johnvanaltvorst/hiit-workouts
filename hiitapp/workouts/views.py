@@ -24,12 +24,13 @@ class WorkoutPlayView(TemplateView):
         workout = Workout.objects.get(id=self.kwargs['workout_pk'])
 
         if('workoutset_pk' in self.kwargs):
-            next_workoutset = (WorkoutSet.objects.filter(workout_pk=self.kwargs['workout_pk'])
-                                        .filter(workoutset_pk__gt=self.kwargs['workoutset_pk'])
-                                        .order_by('pk')[0:1])
+            next_workoutset = (WorkoutSet.objects.filter(workout_id=self.kwargs['workout_pk'])
+                                        .filter(id__gt=self.kwargs['workoutset_pk'])
+                                        .order_by('pk')[0])
         else:
             next_workoutset = (WorkoutSet.objects.filter(workout_id=self.kwargs['workout_pk'])
-                                        .order_by('pk')[0:1])
+                                        .order_by('pk')[1])
+
         context = super().get_context_data(**kwargs)
         context['workout'] = workout
         context['next_workoutset'] = next_workoutset
