@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head_block %}
+  <link rel="stylesheet" href="{% static 'workoutvideos/css/video.css' %}">
+{% endblock %}
+
+{% block content_block_left %}
+
+  <video id="myVideo" width="420" height="315" class="video-js vjs-default-skin" onplay="startCountdown()" onpause="pauseCountdown()" controls>
+    <source src="{% static 'workoutvideos/videos/Daft Punk - Get Lucky (Full Video).mp4' %}" type="video/mp4">
+    <!-- <source src="//vjs.zencdn.net/v/oceans.mp4" type='video/mp4'> -->
+    <!-- <source src="//vjs.zencdn.net/v/oceans.webm" type='video/webm'> -->
+  </video>
+
+  <div id="action-name" class="top-left">Hellooo</div>
+  <div id="action-time" class="centered">Centered</div>
+  <button type="button" class="btn btn-success">
+    <a href="{% url 'workouts:play_next' workout_pk=workout.id workoutset_pk=next_workoutset.pk %}">
+      Next
+    </a>
+  </button>
+
+{% endblock %}
+
+
+<!-- <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js" integrity="sha384-a5N7Y/aK3qNeh15eJKGWxsqtnX/wWdSZSKp+81YjTmS15nvnvxKHuzaWwXHDli+4" crossorigin="anonymous"></script> -->
+
+{% block script_block %}
+  <script src="{% static 'workoutvideos/js/myvideo.js' %}"></script>
+  <script type='text/javascript'>
+      document.getElementById('myVideo').addEventListener('ended',myHandler,false);
+      function myHandler(e) {
+          // What you want to do after the event
+          location.href = 'www.google.co.nz';
+          console.log(e);
+      }
+  </script>
+{% endblock %}

@@ -8,6 +8,11 @@ from .models import WorkoutVideo
 from workoutsets.models import WorkoutSet
 
 # Create your views here.
+
+def play(request):
+    context_dict = {'text':'hello world', 'number':100}
+    return render(request,'workoutvideos/index.html',context_dict)
+
 class WorkoutVideoListView(ListView):
     model = WorkoutVideo
 

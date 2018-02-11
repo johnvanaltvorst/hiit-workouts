@@ -10,4 +10,6 @@ urlpatterns = [
     path('delete/<int:pk>/', views.WorkoutDeleteView.as_view(), name='delete'),
     path('update/<int:pk>/', views.WorkoutUpdateView.as_view(), name='update'),
     path('actionsAPI/', views.actionsAPI, name='actionsAPI'),
+    path('play/workout/<int:workout_pk>/', views.WorkoutPlayView.as_view(), name='play_initial'),
+    path('play/workout/<int:workout_pk>/workoutset/<int:workoutset_pk>/', views.WorkoutPlayView.as_view(), name='play_next'),
 ]
