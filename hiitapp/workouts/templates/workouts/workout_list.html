@@ -6,13 +6,28 @@
   <div class="list-group">
     {% for workout in workout_list %}
     <div class="list-group-item mt-3 pr-1 bg-light">
-      <h4 class="list-group-item-heading"><a href="{% url 'workouts:detail' pk=workout.id %}">{{workout}}</a></h4>
+      <h4 class="list-group-item-heading">
+        <a href="{% url 'workouts:detail' pk=workout.id %}">
+          {{workout}}
+        </a>
+        {% with total=workout.workoutsets.all.count %}
+        {% if total > 0 %}
+        <span class="float-right">
+          <button type="button" class="btn btn-success">
+            <a class="text-white" href="{% url 'workouts:play_initial' workout_pk=workout.id %}">
+              Play - {{ total }} Workout{{ total | pluralize}}
+            </a>
+          </button>
+        </span>
+        {% endif %}
+        {% endwith %}
+      </h4>
       {% if workout.workoutsets.all %}
       <div class="list-group">
         {% for workoutset in workout.workoutsets.all %}
           <div class="list-group-item pr-1 pb-1 mt-4 bg-secondary">
             <div class="list-group-item-heading">
-              <button type="button" class="btn btn-secpmdary mb-1">
+              <button type="button" class="btn btn-default mb-1">
                 <strong>WorkoutSet: </strong><span class="badge badge-light">{{workoutset}}</span>
               </button>
               <button type="button" class="btn btn-warning btn-sm mb-1">
@@ -62,7 +77,6 @@
 
               </div>
               <div class="list-group-item" id="actions_json">
-                {% include 'workouts:actionsAPI' actionset_pk=actionset.id %}
                 {{action_json}}
               </div>
               {% endfor %}

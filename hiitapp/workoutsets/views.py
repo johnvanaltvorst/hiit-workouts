@@ -25,7 +25,7 @@ class WorkoutSetCreateView(CreateView):
         }
 
     def get_success_url(self):
-        return reverse('workouts:detail',kwargs={'pk':self.kwargs['pk']})
+        return reverse('workouts:list')
 
 class WorkoutSetUpdateView(UpdateView):
     model = WorkoutSet
