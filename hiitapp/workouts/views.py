@@ -4,7 +4,7 @@ from django.views.generic import (ListView, DetailView,
                                   CreateView, DeleteView,
                                   UpdateView, TemplateView)
 from django.core import serializers
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from braces.views import SelectRelatedMixin
 
 from .models import Workout
@@ -14,8 +14,13 @@ from actions.models import Action
 # Create your views here.
 
 def GetActionsAPI(self,workoutset_id):
-    actions_json = Action.objects.filter(actionset__workoutset__id=workoutset_id)
-    return JsonResponse(serializers.serialize('json', actions_json), safe=False)
+    actions = Action.objects.filter(actionset__workoutset__id=workoutset_id)
+    actions_json = []
+    for action in actions:
+        actions_json.append({action.action_type,action.duration})
+    action_serialized = serializers.serialize('json',actions)
+
+    return HttpResponse(action_serialized,content_type="application/json")
 
 def GetVideoAPI(self,workoutset_pk):
     workoutset = WorkoutSet.objects.get(id=workoutset_pk)
@@ -42,18 +47,12 @@ class WorkoutPlayView(TemplateView):
                                                     .filter(id__gt=self.kwargs['workoutset_pk'])
                                                     .first())
 
+            context['current_video'] = WorkoutVideo.objects.get(workoutsets__id=self.kwargs['workoutset_pk'])
+
             context['current_actions'] = (Action.objects
                                                     .filter(actionset__workoutset__id=self.kwargs['workoutset_pk'])
                                                     .order_by('id'))
 
-            actions = (Action.objects
-                             .filter(actionset__workoutset__id=self.kwargs['workoutset_pk']))
-
-            timesets = []
-            for action in actions:
-                timesets.append({"type":action.action_type,"duration":action.duration})
-
-            context['timesets'] = timesets
 
             next_workoutset_qs = (WorkoutSet.objects.filter(workout_id=self.kwargs['workout_pk'])
                                         .filter(id__gt=self.kwargs['workoutset_pk'])
@@ -67,16 +66,18 @@ class WorkoutPlayView(TemplateView):
 
         else: #used on PLAY ON WORKOUT LIST PAGE (only workout_id given)
             print("in else")
-            context['current_workoutset'] = WorkoutSet.objects.filter(workout=workout).first()
+            current_workoutset = WorkoutSet.objects.filter(workout=workout).first()
+            context['current_workoutset'] = current_workoutset
+            context['current_video'] = WorkoutVideo.objects.get(workoutsets__id=current_workoutset.id)
 
             actions = (Action.objects
                              .filter(actionset__workoutset__workout=workout))
 
             timesets = []
             for action in actions:
-                timesets.append({"type":str(action.action_type),"duration":action.duration})
+                timesets.append({'type' : str(action.action_type), 'duration' : action.duration})
 
-            context['timesets'] = timesets
+            # context['timesets'] = timesets
 
             next_workoutset_pk = (WorkoutSet.objects.filter(workout_id=self.kwargs['workout_pk'])
                                         .order_by('pk')[1])
