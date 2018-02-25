@@ -1,4 +1,4 @@
-.top-left{
+.top-left {
   position: absolute;
   top: 10%;
   left: 10%;
@@ -12,6 +12,10 @@
   transform: translate(-50%, -50%);
 }
 
-#videojs-overlay-player {
+#myVideo {
   width:100%;
+}
+
+#action-name {
+  color: red;
 }

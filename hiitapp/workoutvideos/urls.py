@@ -10,5 +10,5 @@ urlpatterns = [
     path('delete/<int:pk>/', views.WorkoutVideoDeleteView.as_view(), name='delete'),
     path('update/<int:pk>/', views.WorkoutVideoUpdateView.as_view(), name='update'),
     path('play/', views.play, name='play'),
-
+    path('upload/', views.uploadvideo, name='upload'),
 ]

@@ -5,6 +5,7 @@ from django.views.generic import (ListView, DetailView,
                                   UpdateView)
 
 from .models import WorkoutVideo
+from .forms import VideoForm
 from workoutsets.models import WorkoutSet
 
 # Create your views here.
@@ -12,6 +13,23 @@ from workoutsets.models import WorkoutSet
 def play(request):
     context_dict = {'text':'hello world', 'number':100}
     return render(request,'workoutvideos/index.html',context_dict)
+
+def uploadvideo(request):
+
+    lastvideo = WorkoutVideo.objects.last()
+
+    videofile = lastvideo.videofile
+
+    form = VideoForm(request.POST or None, request.FILES or None)
+
+    if form.is_valid():
+        form.save()
+
+    context = {'videofile': videofile,
+              'form': form
+              }
+
+    return render(request, 'workoutvideos/videos.html', context)
 
 class WorkoutVideoListView(ListView):
     model = WorkoutVideo
@@ -21,14 +39,14 @@ class WorkoutVideoDetailView(DetailView):
 
 class WorkoutVideoCreateView(CreateView):
     model = WorkoutVideo
-    fields = ('name',)
+    fields = ('name','videofile')
 
     def get_success_url(self):
         return reverse('workoutvideos:list')
 
 class WorkoutVideoUpdateView(UpdateView):
     model = WorkoutVideo
-    fields = ('name',)
+    fields = ('name','videofile')
 
     def get_success_url(self):
         return reverse('workoutvideos:list')

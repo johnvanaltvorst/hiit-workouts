@@ -1,34 +1,25 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load staticfiles %}
 
 {% block head_block %}
   <link rel="stylesheet" href="{% static 'workoutvideos/css/video.css' %}">
 {% endblock %}
 
 {% block content_block_left %}
-
-  <video id="myVideo" width="420" height="315" class="video-js vjs-default-skin" onplay="startCountdown()" onpause="pauseCountdown()" autoplay controls>
-    <source src="{% static 'workoutvideos/videos/Daft Punk - Get Lucky (Full Video).mp4' %}" type="video/mp4">
-    <!-- <source src="//vjs.zencdn.net/v/oceans.mp4" type='video/mp4'> -->
-    <!-- <source src="//vjs.zencdn.net/v/oceans.webm" type='video/webm'> -->
-  </video>
-  {% if workout.workoutset.video %}
-  <video id="myVideo2" width="420" height="315"  onplay="startCountdown()" onpause="pauseCountdown()" controls>
-    <source src="workoutvideos/videos/{{workoutset.video}}.mp4" type="video/mp4">
-  </video>
-  <p></p>
-  {% endif %}
-  <div id="action-name" class="top-left">Hellooo</div>
-  <div id="action-time" class="centered">Centered</div>
+  <div class="container">
+    <div id="action-name" class="top-left">Hellooo</div>
+    <div id="action-time" class="centered">Centered</div>
+    <video id="myVideo" width="420" height="315" class="video-js vjs-default-skin" onplay="startCountdown()" onpause="pauseCountdown()" autoplay controls>
+      <source src="{{current_video.videofile.url}}" type="video/mp4">
+    </video>
+  </div>
   <br>
+
   {% if current_workoutset %}
   <p>{{ current_workoutset.name}}</p>
-  <p>{{ timesets }}</p>
   {% endif %}
+
   {% if next_workoutset_exists %}
-  <video id="js-video" autoplay controls>
-    <source id="js-video-src" src="" type="video/mp4">
-  </video>
   <button type="button" class="btn btn-success">
     <a class="text-white" href="{% url 'workouts:play_next' workout_pk=workout.id workoutset_pk=next_workoutset_pk %}">
       Next WorkoutSet
@@ -41,6 +32,7 @@
       </a>
     </button>
   {% endif %}
+
 {% endblock %}
 
 
@@ -49,49 +41,62 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js" integrity="sha384-a5N7Y/aK3qNeh15eJKGWxsqtnX/wWdSZSKp+81YjTmS15nvnvxKHuzaWwXHDli+4" crossorigin="anonymous"></script> -->
 
 {% block script_block %}
-  <!-- <script src="{% static 'workoutvideos/js/myvideo.js' %}"></script> -->
-  <script type="text/javascript">
-  var action_name = document.getElementById("action-name");
-  var action_time = document.getElementById("action-time");
-  console.log({{timesets}})
-  var timesets = {{ timesets }}
+  <script>
+    var data = [];
+    $.ajax({
+      method: 'GET',
+      url: "{% url 'workouts:api_get_actions' workoutset_id=workout.workoutsets.all.first.id %}",
+      success: function(actions){
+        console.log(actions);
+        actions.forEach(function(e,i,a){
+          data.push({"type":e.fields.action_type, "duration":e.fields.duration});
+        });
+      }
+    });
 
-  var currentsec = 5;
-  var currentaction = "Get Ready!";
-  var currenttimeset_iteration = 0;
-  var interval;
+    var timesets = data;
 
-  action_name.innerHTML = currentaction;
+    var action_name = document.getElementById("action-name");
+    var action_time = document.getElementById("action-time");
 
-  function startCountdown(){
-    interval = setInterval(function(){
-      countdown();
-    },1000);
-  }
 
-  function countdown(){
-    checktime();
+    var currentsec = 5;
+    var currentaction = "Get Ready!";
+    var currenttimeset_iteration = 0;
+    var interval;
+
     action_name.innerHTML = currentaction;
-    action_time.innerHTML = currentsec;
-    console.log(currenttimeset_iteration);
-    console.log(currentsec);
-    console.log(currentaction);
-    currentsec-= 1;
-  }
 
-  function checktime(){
-    if(currentsec == 0){
-      currentaction = timesets[currenttimeset_iteration].type;
-      currentsec = timesets[currenttimeset_iteration].duration;
-      currenttimeset_iteration++;
+    function startCountdown(){
+      interval = setInterval(function(){
+        countdown();
+      },1000);
     }
-  }
 
-  function pauseCountdown(){
-    clearInterval(interval);
-  }
+    function countdown(){
+      checktime();
+      action_name.innerHTML = currentaction;
+      action_time.innerHTML = currentsec;
+      console.log(currenttimeset_iteration);
+      console.log(currentsec);
+      console.log(currentaction);
+      currentsec-= 1;
+    }
+
+    function checktime(){
+      if(currentsec == 0){
+        currentaction = timesets[currenttimeset_iteration].type;
+        currentsec = timesets[currenttimeset_iteration].duration;
+        currenttimeset_iteration++;
+      }
+    }
+
+    function pauseCountdown(){
+      clearInterval(interval);
+    }
 
   </script>
+  <!-- <script src="{% static 'workoutvideos/js/myvideo.js' %}"></script> -->
   <script type='text/javascript'>
 
       document.getElementById('myVideo').addEventListener('ended',myHandler,false);
@@ -107,20 +112,13 @@
   <script type="text/javascript">
     $(document).ready(function(){
       $.ajax({
-        type: 'GET',
+        method: 'GET',
         url: "{% url 'workouts:api_get_video' workoutset_pk=workout.workoutsets.all.first.id %}",
         // url: '/api/video/for/workoutset/{{workout.workoutsets.all.first.id}}/',
         success: function(data){
           var src = document.getElementById('js-video-src');
           //src.setAttribute('src',data)
           console.log(data);
-        }
-      });
-      $.ajax({
-        type: 'GET',
-        url: "{% url 'workouts:api_get_actions' workoutset_id=workout.workoutsets.all.first.id %}",
-        success: function(actions){
-          console.log(actions);
         }
       });
     });

@@ -74,10 +74,6 @@
                   {% endfor %}
                   <a class="btn btn-primary mt-2" href="{% url 'actions:add_to_actionset' pk=actionset.id %}">Add Action to {{actionset}}</a>
                 </div>
-
-              </div>
-              <div class="list-group-item" id="actions_json">
-                {{action_json}}
               </div>
               {% endfor %}
             </div>
